@@ -114,6 +114,12 @@ int get_extern(struct jit* jit, uint8_t* addr, int idx, int type)
     }
 }
 
+#if LUA_VERSION_NUM == 503
+LUA_API void lua_remove_compat (lua_State *L, int idx) {
+	lua_remove(L, idx);
+}
+#endif
+
 static void* reserve_code(struct jit* jit, lua_State* L, size_t sz)
 {
     struct page* page;
@@ -176,7 +182,13 @@ static void* reserve_code(struct jit* jit, lua_State* L, size_t sz)
         ADDFUNC(jit->lua_dll, lua_pushnil);
         ADDFUNC(jit->lua_dll, lua_callk);
         ADDFUNC(jit->lua_dll, lua_settop);
+#if LUA_VERSION_NUM == 503
+	lua_pushliteral(L, "lua_remove");
+	lua_pushcfunction(L, (lua_CFunction) lua_remove_compat);
+	lua_rawset(L, -3);
+#else
         ADDFUNC(jit->lua_dll, lua_remove);
+#endif
 #undef ADDFUNC
 
         for (i = 0; extnames[i] != NULL; i++) {

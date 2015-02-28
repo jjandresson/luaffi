@@ -3,7 +3,8 @@
 PKG_CONFIG=pkg-config
 LUA=lua
 
-LUA_CFLAGS=`$(PKG_CONFIG) --cflags lua5.2 2>/dev/null || $(PKG_CONFIG) --cflags lua`
+#LUA_CFLAGS=`$(PKG_CONFIG) --cflags lua5.2 2>/dev/null || $(PKG_CONFIG) --cflags lua`
+LUA_CFLAGS=-I$(PWD)/../lua-5.2.3/src
 SOCFLAGS=-fPIC
 SOCC=$(CC) -shared $(SOCFLAGS)
 CFLAGS=-fPIC -g -Wall -Werror $(LUA_CFLAGS) -fvisibility=hidden -Wno-unused-function --std=gnu99
